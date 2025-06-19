@@ -3,20 +3,39 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
-    "start": "expo start",
+    "start": "docker compose up -d && expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "tsx src/db/migrate.ts",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "expo": "~53.0.11",
+    "@electric-sql/client": "^1.0.4",
+    "@expo/metro-runtime": "~5.0.4",
+    "@tanstack/db-collections": "https://pkg.pr.new/@tanstack/db-collections@186",
+    "@tanstack/react-db": "https://pkg.pr.new/@tanstack/react-db@186",
+    "drizzle-orm": "^0.44.2",
+    "drizzle-zod": "^0.8.2",
+    "expo": "~53.0.12",
+    "expo-constants": "~17.1.6",
+    "expo-router": "^5.1.0",
     "expo-status-bar": "~2.2.3",
-    "react": "19.0.0",
-    "react-native": "0.79.3"
+    "pg": "^8.16.1",
+    "postgres": "^3.4.7",
+    "react": "^19.1.0",
+    "react-native": "0.80.0",
+    "react-native-random-uuid": "^0.1.4",
+    "react-native-web": "^0.20.0",
+    "zod": "^3.25.67"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
-    "@types/react": "~19.0.10",
+    "@types/pg": "^8.15.4",
+    "@types/react": "~19.1.8",
+    "dotenv": "^16.5.0",
+    "drizzle-kit": "^0.31.1",
     "typescript": "~5.8.3"
   },
   "private": true
