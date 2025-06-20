@@ -4,7 +4,7 @@ import {
 } from "@tanstack/db-collections";
 import Constants from "expo-constants";
 import { createCollection, type Transaction } from "@tanstack/react-db";
-import { Todo, insertTodoSchema } from "../db/schema";
+import { Todo, selectTodoSchema } from "../db/schema";
 
 const hostname = new URL(Constants.linkingUri).hostname;
 
@@ -14,7 +14,7 @@ const hostname = new URL(Constants.linkingUri).hostname;
 export const todoCollection = createCollection(
   electricCollectionOptions({
     id: "todos",
-    schema: insertTodoSchema,
+    schema: selectTodoSchema,
     // Electric syncs data using "shapes". These are filtered views
     // on database tables that Electric keeps in sync for you.
     shapeOptions: {
@@ -29,7 +29,7 @@ export const todoCollection = createCollection(
         },
       },
     },
-    getKey: (item) => item.id!,
+    getKey: (item) => item.id,
   }),
 );
 
@@ -39,7 +39,7 @@ export const todoCollection = createCollection(
 export const mutationFn = async ({
   transaction,
 }: {
-  transaction: Transaction<Todo>;
+  transaction: Transaction<Partial<Todo>>;
 }) => {
   const payload = transaction.mutations.map((mutation) => {
     const { collection: _, ...rest } = mutation;

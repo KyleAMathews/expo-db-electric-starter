@@ -1,20 +1,16 @@
 import React, { useState } from 'react';
-import Constants from 'expo-constants';
 import { View, Text, TextInput, Button, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { useLiveQuery, useOptimisticMutation } from '@tanstack/react-db';
 import { todoCollection, mutationFn } from '../src/db/collections';
 import { StatusBar } from 'expo-status-bar';
 
-console.log({
-  url: `${Constants.linkingUri | `http://localhost:8081`}/v1/shape`,
-});
 export default function HomeScreen() {
   const [newTodoText, setNewTodoText] = useState('');
 
   // Query todos from the collection
   const { data: todos } = useLiveQuery(q => q.from({ todoCollection }));
 
-  console.log({todos})
+  console.log({ todos })
 
   // Set up mutations
   const addTodo = useOptimisticMutation({ mutationFn });

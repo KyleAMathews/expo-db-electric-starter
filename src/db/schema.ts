@@ -1,5 +1,5 @@
 import { pgTable, serial, text, boolean, timestamp } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
+import { createSelectSchema } from "drizzle-zod";
 import {z} from "zod"
 
 /**
@@ -19,6 +19,6 @@ export const todos = pgTable("todos", {
     .defaultNow(),
 });
 
-export const insertTodoSchema = createInsertSchema(todos)
+export const selectTodoSchema = createSelectSchema(todos)
 
-export type Todo = z.infer<typeof insertTodoSchema>
+export type Todo = z.infer<typeof selectTodoSchema>
