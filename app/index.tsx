@@ -3,6 +3,7 @@ import { View, Text, TextInput, Button, FlatList, StyleSheet, TouchableOpacity }
 import { useLiveQuery, useOptimisticMutation } from '@tanstack/react-db';
 import { todoCollection, mutationFn } from '../src/db/collections';
 import { StatusBar } from 'expo-status-bar';
+import { Todo } from '../src/db/schema';
 
 export default function HomeScreen() {
   const [newTodoText, setNewTodoText] = useState('');
@@ -36,7 +37,7 @@ export default function HomeScreen() {
   };
 
   // Handle toggling a todo's completed status
-  const handleToggleTodo = (todo) => {
+  const handleToggleTodo = (todo: Todo) => {
     updateTodo.mutate(() =>
       todoCollection.update(todo.id, (draft) => {
         draft.completed = !draft.completed
@@ -45,7 +46,7 @@ export default function HomeScreen() {
   };
 
   // Handle deleting a todo
-  const handleDeleteTodo = (todo) => {
+  const handleDeleteTodo = (todo: Todo) => {
     deleteTodo.mutate(() =>
       todoCollection.delete(todo.id)
     );
