@@ -15,8 +15,9 @@
   "dependencies": {
     "@electric-sql/client": "^1.0.4",
     "@expo/metro-runtime": "~5.0.4",
-    "@tanstack/db-collections": "https://pkg.pr.new/@tanstack/db-collections@565afdc",
-    "@tanstack/react-db": "https://pkg.pr.new/@tanstack/react-db@565afdc",
+    "@tanstack/db": "https://pkg.pr.new/@tanstack/db@c9f3ce7",
+    "@tanstack/db-collections": "https://pkg.pr.new/@tanstack/db-collections@c9f3ce7",
+    "@tanstack/react-db": "https://pkg.pr.new/@tanstack/react-db@c9f3ce7",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "cors": "^2.8.5",

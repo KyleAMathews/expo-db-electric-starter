@@ -1,56 +1,72 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
-import { useLiveQuery, useOptimisticMutation } from '@tanstack/react-db';
-import { todoCollection, mutationFn } from '../src/db/collections';
-import { StatusBar } from 'expo-status-bar';
-import { Todo } from '../src/db/schema';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import { useLiveQuery } from "@tanstack/react-db";
+import { StatusBar } from "expo-status-bar";
+import { apiClient, hostname } from "../src/utils/api-client";
+import { selectTodoSchema } from "../src/db/schema";
+import {
+  electricCollectionOptions,
+} from "@tanstack/db-collections";
+import { createCollection } from "@tanstack/react-db";
+import { parseISO } from "date-fns";
+
+const todoCollection = createCollection(
+  electricCollectionOptions({
+    id: "todos",
+    schema: selectTodoSchema,
+    // Electric syncs data using "shapes". These are filtered views
+    // on database tables that Electric keeps in sync for you.
+    shapeOptions: {
+      url: `http://${hostname}:3000/v1/shape`,
+      params: {
+        table: "todos",
+      },
+      parser: {
+        // Parse timestamp columns into JavaScript Date objects
+        timestamptz: (date: string) => {
+          return parseISO(date);
+        },
+      },
+    },
+    onInsert: async ({ transaction }) => {
+      const { txid } = await apiClient.createTodo(
+        transaction.mutations[0].modified,
+      );
+
+      return { txid: String(txid) };
+    },
+    onUpdate: async ({ transaction }) => {
+      const { original: { id }, changes } = transaction.mutations[0];
+      const { txid } = await apiClient.updateTodo(
+        id,
+        changes,
+      );
+
+      return { txid: String(txid) };
+    },
+    onDelete: async ({ transaction }) => {
+      const { id } = transaction.mutations[0].original;
+      const { txid } = await apiClient.deleteTodo(id);
+
+      return { txid: String(txid) };
+    },
+    getKey: (item) => item.id,
+  }),
+);
 
 export default function HomeScreen() {
-  const [newTodoText, setNewTodoText] = useState('');
+  const [newTodoText, setNewTodoText] = useState("");
 
   // Query todos from the collection
-  const { data: todos } = useLiveQuery(q => q.from({ todoCollection }));
-
-  console.log({ todos })
-
-  // Set up mutations
-  const addTodo = useOptimisticMutation({ mutationFn });
-  const updateTodo = useOptimisticMutation({ mutationFn });
-  const deleteTodo = useOptimisticMutation({ mutationFn });
-
-  // Handle adding a new todo
-  const handleAddTodo = () => {
-    if (!newTodoText.trim()) return;
-
-    addTodo.mutate(() =>
-      todoCollection.insert({
-        // For a real app, you'd want to use a proper ID generation strategy
-        id: Math.floor(Math.random() * 1000000),
-        text: newTodoText,
-        completed: false,
-        created_at: new Date(),
-        updated_at: new Date()
-      })
-    );
-
-    setNewTodoText('');
-  };
-
-  // Handle toggling a todo's completed status
-  const handleToggleTodo = (todo: Todo) => {
-    updateTodo.mutate(() =>
-      todoCollection.update(todo.id, (draft) => {
-        draft.completed = !draft.completed
-      })
-    );
-  };
-
-  // Handle deleting a todo
-  const handleDeleteTodo = (todo: Todo) => {
-    deleteTodo.mutate(() =>
-      todoCollection.delete(todo.id)
-    );
-  };
+  const { data: todos } = useLiveQuery((q) => q.from({ todoCollection }));
 
   return (
     <View style={styles.container}>
@@ -64,7 +80,20 @@ export default function HomeScreen() {
           onChangeText={setNewTodoText}
           placeholder="Add a new todo..."
         />
-        <Button title="Add" onPress={handleAddTodo} />
+        <Button
+          title="Add"
+          onPress={() => {
+            todoCollection.insert({
+              // Random temporary id.
+              id: Math.floor(Math.random() * 1000000),
+              text: newTodoText,
+              completed: false,
+              created_at: new Date(),
+              updated_at: new Date(),
+            });
+            setNewTodoText("");
+          }}
+        />
       </View>
 
       {/* Todo list */}
@@ -75,19 +104,23 @@ export default function HomeScreen() {
           <View style={styles.todoItem}>
             <TouchableOpacity
               style={styles.todoCheckbox}
-              onPress={() => handleToggleTodo(item)}
+              onPress={() => {
+                todoCollection.update(item.id, (draft) => {
+                  draft.completed = !draft.completed;
+                });
+              }}
             >
               {item.completed && <Text style={styles.checkmark}>✓</Text>}
             </TouchableOpacity>
             <Text
               style={[
                 styles.todoText,
-                item.completed && styles.completedTodoText
+                item.completed && styles.completedTodoText,
               ]}
             >
               {item.text}
             </Text>
-            <TouchableOpacity onPress={() => handleDeleteTodo(item)}>
+            <TouchableOpacity onPress={() => todoCollection.delete(item.id)}>
               <Text style={styles.deleteButton}>✕</Text>
             </TouchableOpacity>
           </View>
@@ -103,57 +136,57 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginTop: 40,
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   inputContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginBottom: 20,
   },
   input: {
     flex: 1,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     padding: 10,
     marginRight: 10,
     borderRadius: 4,
   },
   todoItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: "#eee",
   },
   todoCheckbox: {
     width: 24,
     height: 24,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     borderRadius: 4,
     marginRight: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   checkmark: {
-    color: '#0080ff',
+    color: "#0080ff",
   },
   todoText: {
     flex: 1,
   },
   completedTodoText: {
-    textDecorationLine: 'line-through',
-    color: '#aaa',
+    textDecorationLine: "line-through",
+    color: "#aaa",
   },
   deleteButton: {
-    color: '#ff3b30',
-    fontWeight: 'bold',
+    color: "#ff3b30",
+    fontWeight: "bold",
     fontSize: 16,
   },
 });

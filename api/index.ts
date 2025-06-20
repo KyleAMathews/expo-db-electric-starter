@@ -30,40 +30,6 @@ async function generateTxId(tx: any): Promise<number> {
 
 // ===== TODOS API =====
 
-// GET all todos
-app.get(`/api/todos`, async (req, res) => {
-  try {
-    const todosResult = await db.query.todos.findMany();
-    res.status(200).json(todosResult);
-  } catch (error) {
-    console.error(`Error fetching todos:`, error);
-    res.status(500).json({
-      error: `Failed to fetch todos`,
-      details: error instanceof Error ? error.message : String(error),
-    });
-  }
-});
-
-// GET a single todo by ID
-app.get(`/api/todos/:id`, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const [todo] = await db.select().from(todos).where(eq(todos.id, Number(id)));
-
-    if (!todo) {
-      return res.status(404).json({ error: `Todo not found` });
-    }
-
-    res.status(200).json(todo);
-  } catch (error) {
-    console.error(`Error fetching todo:`, error);
-    res.status(500).json({
-      error: `Failed to fetch todo`,
-      details: error instanceof Error ? error.message : String(error),
-    });
-  }
-});
-
 // POST create a new todo
 app.post(`/api/todos`, async (req, res) => {
   try {
