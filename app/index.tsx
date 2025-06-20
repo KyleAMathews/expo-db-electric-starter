@@ -1,3 +1,4 @@
+import 'react-native-random-uuid'
 import React, { useState } from "react";
 import {
   View,
