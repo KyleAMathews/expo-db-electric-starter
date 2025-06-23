@@ -1,7 +1,5 @@
 # Expo, TanStack DB, and Electric Starter
 
-Starter for Expo, TanStack DB, and Electric.
-
 https://github.com/user-attachments/assets/b4be50e9-3ab1-4684-8964-26defdfcfeb6
 
 ## Why these technologies?
