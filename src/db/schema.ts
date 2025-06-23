@@ -29,7 +29,9 @@ export const updateTodoSchema = createUpdateSchema(todos);
 
 // Validation functions
 export function validateInsertTodo(data: unknown) {
-  return insertTodoSchema.parse(data);
+  return insertTodoSchema
+    .pick({ text: true })
+    .parse(data);
 }
 
 export function validateUpdateTodo(data: unknown) {

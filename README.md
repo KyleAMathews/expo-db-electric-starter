@@ -2,6 +2,11 @@
 
 Starter for Expo, TanStack DB, and Electric.
 
+https://github.com/LinusU/react-native-random-uuid is needed as a polyfill
+for TanStack DB on React Native/Expo.
+
+https://github.com/user-attachments/assets/b4be50e9-3ab1-4684-8964-26defdfcfeb6
+
 ## Setup
 
 1. Install dependencies:

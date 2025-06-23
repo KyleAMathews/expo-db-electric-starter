@@ -82,15 +82,17 @@ export default function HomeScreen() {
         <Button
           title="Add"
           onPress={() => {
-            todoCollection.insert({
-              // Random temporary id.
-              id: Math.floor(Math.random() * 1000000),
-              text: newTodoText,
-              completed: false,
-              created_at: new Date(),
-              updated_at: new Date(),
-            });
-            setNewTodoText("");
+            if (newTodoText.length > 0) {
+              todoCollection.insert({
+                // Random temporary id.
+                id: Math.floor(Math.random() * 1000000),
+                text: newTodoText,
+                completed: false,
+                created_at: new Date(),
+                updated_at: new Date(),
+              });
+              setNewTodoText("");
+            }
           }}
         />
       </View>
