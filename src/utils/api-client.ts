@@ -59,4 +59,3 @@ export const apiClient = {
     return this._request(`/todos/${id}`, { method: "DELETE" });
   },
 };
-

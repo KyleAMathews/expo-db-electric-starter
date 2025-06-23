@@ -5,11 +5,13 @@ Starter for Expo, TanStack DB, and Electric.
 ## Setup
 
 1. Install dependencies:
+
    ```bash
    pnpm i
    ```
 
 2. Start the development server:
+
    ```bash
    pnpm start
    ```

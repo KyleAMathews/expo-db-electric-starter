@@ -1,4 +1,4 @@
-import 'react-native-random-uuid'
+import "react-native-random-uuid";
 import React, { useState } from "react";
 import {
   View,
@@ -13,9 +13,7 @@ import { useLiveQuery } from "@tanstack/react-db";
 import { StatusBar } from "expo-status-bar";
 import { apiClient, hostname } from "../src/utils/api-client";
 import { selectTodoSchema } from "../src/db/schema";
-import {
-  electricCollectionOptions,
-} from "@tanstack/db-collections";
+import { electricCollectionOptions } from "@tanstack/db-collections";
 import { createCollection } from "@tanstack/react-db";
 import { parseISO } from "date-fns";
 
@@ -45,11 +43,11 @@ const todoCollection = createCollection(
       return { txid: String(txid) };
     },
     onUpdate: async ({ transaction }) => {
-      const { original: { id }, changes } = transaction.mutations[0];
-      const { txid } = await apiClient.updateTodo(
-        id,
+      const {
+        original: { id },
         changes,
-      );
+      } = transaction.mutations[0];
+      const { txid } = await apiClient.updateTodo(id, changes);
 
       return { txid: String(txid) };
     },
@@ -103,6 +101,7 @@ export default function HomeScreen() {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.todoItem}>
+            {/* update the todo */}
             <TouchableOpacity
               style={styles.todoCheckbox}
               onPress={() => {
@@ -121,6 +120,7 @@ export default function HomeScreen() {
             >
               {item.text}
             </Text>
+            {/* delete the todo */}
             <TouchableOpacity onPress={() => todoCollection.delete(item.id)}>
               <Text style={styles.deleteButton}>✕</Text>
             </TouchableOpacity>
@@ -166,8 +166,8 @@ const styles = StyleSheet.create({
     borderBottomColor: "#eee",
   },
   todoCheckbox: {
-    width: 24,
-    height: 24,
+    width: 44,
+    height: 44,
     borderWidth: 1,
     borderColor: "#ddd",
     borderRadius: 4,

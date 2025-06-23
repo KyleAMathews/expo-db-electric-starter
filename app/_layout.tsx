@@ -1,7 +1,5 @@
-import React from 'react';
-import { Stack } from 'expo-router';
-import { DBProvider } from '@tanstack/react-db';
-import { todoCollection } from '../src/db/collections';
+import React from "react";
+import { Stack } from "expo-router";
 
 /**
  * Root layout component that provides the TanStack DB context
@@ -9,16 +7,14 @@ import { todoCollection } from '../src/db/collections';
  */
 export default function RootLayout() {
   return (
-    <DBProvider collections={[todoCollection]}>
-      <Stack>
-        <Stack.Screen
-          name="index"
-          options={{
-            title: 'Todo App',
-            headerShown: false,
-          }}
-        />
-      </Stack>
-    </DBProvider>
+    <Stack>
+      <Stack.Screen
+        name="index"
+        options={{
+          title: "Todo App",
+          headerShown: false,
+        }}
+      />
+    </Stack>
   );
 }

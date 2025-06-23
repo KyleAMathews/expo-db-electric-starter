@@ -2,10 +2,7 @@ import express from "express";
 import cors from "cors";
 import { db } from "../src/db";
 import { todos } from "../src/db/schema";
-import {
-  validateInsertTodo,
-  validateUpdateTodo,
-} from "../src/db/validation";
+import { validateInsertTodo, validateUpdateTodo } from "../src/db/schema";
 import { sql, eq } from "drizzle-orm";
 
 // Create Express app
@@ -17,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 // Health check endpoint
-app.get(`/api/health`, (req, res) => {
+app.get(`/api/health`, (_req, res) => {
   res.status(200).json({ status: `ok` });
 });
 
@@ -37,10 +34,7 @@ app.post(`/api/todos`, async (req, res) => {
 
     const result = await db.transaction(async (tx) => {
       const txid = await generateTxId(tx);
-      const [newTodo] = await tx
-        .insert(todos)
-        .values(todoData)
-        .returning();
+      const [newTodo] = await tx.insert(todos).values(todoData).returning();
       return { todo: newTodo, txid };
     });
 
